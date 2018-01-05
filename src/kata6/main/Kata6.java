@@ -1,59 +1,60 @@
 package kata6.main;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import kata6.model.Histogram;
-import kata6.model.Mail;
+import kata6.model.Person;
+import kata6.view.DataBaseList;
 import kata6.view.HistogramDisplay;
 import kata6.view.HistogramBuilder;
-import kata6.view.MailListReader;
 
 public class Kata6 {
     
     private String fileName = "";
-    private List<Mail> listMail;
-    private HistogramBuilder<Mail> builder;
+    private List<Person> listPerson;
+    private HistogramBuilder<Person> builderPerson;
 
-    private Histogram<String> domains;
-    private Histogram<Character> letters;            
+    private Histogram<Character> gender;
+    private Histogram<Float> weight;            
     
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
         Kata6 kata4 = new Kata6();
         kata4.execute();
     }
     
-    private void input() throws IOException {
-        fileName = "C:\\Users\\Gabriel\\Documents\\NetBeansProjects\\Kata6\\emailsfile.txt"; 
-        listMail = MailListReader.read(fileName);
+    private void input() throws IOException, ClassNotFoundException, SQLException {
+        fileName = "C:\\Users\\Gabriel\\Downloads\\KATA.sDB"; 
+        listPerson = DataBaseList.read(fileName);
     }
     
     private void process() throws IOException {
-        builder = new HistogramBuilder<>(listMail);
+        builderPerson = new HistogramBuilder<>(listPerson);
 
-        domains = builder.build(new Attribute<Mail, String>() {
+        gender = builderPerson.build(new Attribute<Person, Character>() {
 
             @Override
-            public String get(Mail item) {
-                return item.getMail().split("@")[1];
+            public Character get(Person item) {
+                return item.getGender();
             }
         });
 
-        letters = builder.build(new Attribute<Mail, Character>() {
+        weight = builderPerson.build(new Attribute<Person, Float>() {
 
             @Override
-            public Character get(Mail item) {
-                return item.getMail().charAt(0);
+            public Float get(Person item) {
+                return item.getWeight();
             }
         });
     }
 
     
     private void output() {
-        new HistogramDisplay(domains, "Dominios").excute();
-        new HistogramDisplay(letters, "Primer Caracter").excute();
+        new HistogramDisplay(gender, "Genero").excute();
+        new HistogramDisplay(weight, "Peso").excute();
     }
     
-    private void execute() throws IOException {
+    private void execute() throws IOException, ClassNotFoundException, SQLException {
         input();
         process();
         output();       
